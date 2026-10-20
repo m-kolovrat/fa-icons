@@ -1,0 +1,57 @@
+{
+    "name": "fa-icons",
+    "version": "0.1.0",
+    "description": "Fa icons, flags and logos from the Fa Design System Figma file, as React components and raw SVG",
+    "license": "UNLICENSED",
+    "private": true,
+    "main": "./dist/index.js",
+    "module": "./dist/index.mjs",
+    "types": "./dist/index.d.ts",
+    "sideEffects": false,
+    "files": [
+        "dist"
+    ],
+    "exports": {
+        ".": {
+            "types": "./dist/index.d.ts",
+            "import": "./dist/index.mjs",
+            "require": "./dist/index.js"
+        },
+        "./svg/*": "./dist/svg/*",
+        "./icons/*": {
+            "types": "./dist/icons/*.d.ts",
+            "import": "./dist/icons/*.mjs",
+            "require": "./dist/icons/*.js"
+        },
+        "./flags/*": {
+            "types": "./dist/flags/*.d.ts",
+            "import": "./dist/flags/*.mjs",
+            "require": "./dist/flags/*.js"
+        },
+        "./logos/*": {
+            "types": "./dist/logos/*.d.ts",
+            "import": "./dist/logos/*.mjs",
+            "require": "./dist/logos/*.js"
+        }
+    },
+    "scripts": {
+        "check": "node scripts/check.mjs",
+        "generate": "node scripts/generate.mjs",
+        "build": "node scripts/generate.mjs && tsup",
+        "test": "node --test test/*.test.mjs",
+        "prepare": "npm run build"
+    },
+    "peerDependencies": {
+        "react": ">=18"
+    },
+    "devDependencies": {
+        "@svgr/core": "^8.1.0",
+        "@svgr/plugin-jsx": "^8.1.0",
+        "@types/react": "^19.2.0",
+        "react": "^19.2.0",
+        "react-dom": "^19.2.0",
+        "svgo": "^4.0.0",
+        "tsup": "^8.5.0",
+        "typescript": "^5.9.3"
+    }
+}
