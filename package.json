@@ -39,6 +39,7 @@
         "generate": "node scripts/generate.mjs",
         "build": "node scripts/generate.mjs && tsup",
         "test": "node --test test/*.test.mjs",
+        "preview": "npm run build && node scripts/preview.mjs && python3 -m http.server 4310 --directory preview",
         "prepare": "npm run build"
     },
     "peerDependencies": {

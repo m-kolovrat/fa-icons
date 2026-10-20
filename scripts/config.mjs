@@ -6,6 +6,8 @@
  * - `frame`: required width × height of every SVG in the set; `npm run check` enforces it.
  * - `currentColor`: replace fills and strokes with `currentColor`, so the page sets the color with a `text-*` class.
  * - `keepColors`: per file name (`*` allowed), colors that stay as exported. `"all"` keeps every color.
+ * - `componentNames`: per file name, a component name to use instead of the generated one, for names that would
+ *   clash with another export (see `reservedNames`).
  */
 export const sets = {
     icons: {
@@ -15,11 +17,13 @@ export const sets = {
         frame: [20, 20],
         currentColor: true,
         keepColors: {},
+        // `Flag` is the <Flag name="…" /> lookup.
+        componentNames: { flag: "FlagIcon" },
     },
     flags: {
         figma: "Flag",
         suffix: "Flag",
-        frame: [24, 24],
+        frame: [20, 20],
         currentColor: false,
         keepColors: {},
     },
@@ -37,3 +41,6 @@ export const sets = {
         },
     },
 };
+
+/** Names the package exports besides the generated components. An asset may not generate one of these. */
+export const reservedNames = ["Flag", "flags", "FlagName", "FlagProps", "IconProps"];

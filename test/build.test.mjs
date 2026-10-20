@@ -81,7 +81,7 @@ test("flags keep their colors and get unique ids", () => {
     assert.match(html, /id="flags-norway-nok-/);
     assert.match(html, /clip-path="url\(#flags-norway-nok-/);
     assert.match(html, /aria-hidden="true"/);
-    assert.match(html, /width="24"/);
+    assert.match(html, /width="20"/);
     assert.deepEqual(Object.keys(assets.flags), ["globe", "norway-nok"]);
 });
 
@@ -104,11 +104,13 @@ test("the check catches bad names, wrong frames and unsupported features", () =>
     writeFileSync(join(dir, "icons/Arrow Right.svg"), '<svg width="20" height="20"></svg>');
     writeFileSync(join(dir, "icons/big.svg"), '<svg width="24" height="24" viewBox="0 0 24 24"></svg>');
     writeFileSync(join(dir, "icons/masked.svg"), '<svg width="20" height="20"><mask id="m"/></svg>');
-    writeFileSync(join(dir, "flags/arrow-left.svg"), '<svg width="24" height="24"></svg>');
+    writeFileSync(join(dir, "flags/arrow-left.svg"), '<svg width="20" height="20"></svg>');
+    writeFileSync(join(dir, "icons/icon-props.svg"), '<svg width="20" height="20"></svg>');
 
     const problems = check(dir).join("\n");
     assert.match(problems, /Arrow Right\.svg: name must be lowercase kebab-case/);
     assert.match(problems, /big\.svg: frame is 24×24, expected 20×20/);
     assert.match(problems, /masked\.svg: uses mask/);
     assert.doesNotMatch(problems, /flags\/arrow-left/, "ArrowLeftFlag doesn't collide with the ArrowLeft icon");
+    assert.match(problems, /icon-props\.svg: component name IconProps is reserved/);
 });

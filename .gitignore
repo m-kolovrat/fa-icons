@@ -3,3 +3,4 @@ src/
 dist/
 *.tgz
 .DS_Store
+preview/

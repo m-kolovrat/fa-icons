@@ -78,11 +78,13 @@ Figma is the source. Every asset is a component in its Figma section, and its na
 1. In Figma, select the components in the section and export them as **SVG**. Leave "Outline text" off,
    "Include id attribute" off, and don't outline strokes.
 2. Put the files in `svg/icons`, `svg/flags` or `svg/logos`, replacing old ones.
-3. Run `npm run check`. It fails on names that aren't lowercase kebab-case, icons whose frame isn't 20×20, flags
-   that aren't 24×24, two assets that would get the same component name, and SVG features icons can't use
+3. Run `npm run check`. It fails on names that aren't lowercase kebab-case, icons and flags whose frame isn't
+   20×20, two assets that would get the same component name, and SVG features icons can't use
    (masks, filters, images, text, gradients), because the same files will be converted for Android and iOS.
 4. Run `npm run build` and `npm test`.
 5. For a new brand-colored logo, add it to `keepColors` in `scripts/config.mjs`. Every other logo color becomes `currentColor`.
+6. If a name would clash with another export, `npm run check` says so; give it a `componentNames` override in
+   `scripts/config.mjs`. The `flag` icon is `FlagIcon`, because `Flag` is the `<Flag name="…" />` lookup.
 
 ## Release
 
@@ -101,5 +103,6 @@ Apps update by changing the tag in their `package.json`.
 | `npm run generate` | `svg/` → `src/` (components, indexes, cleaned SVGs)                             |
 | `npm run build`    | `generate`, then tsup → `dist/`                                                 |
 | `npm test`         | Builds `test/fixtures` and checks sizes, colors, ids and the `Flag` lookup      |
+| `npm run preview`  | Builds, then serves every component at http://localhost:4310 (size, color, dark) |
 
 `src/` and `dist/` are generated and not committed.

@@ -1,5 +1,6 @@
 import { fileURLToPath } from "node:url";
-import { NAME_PATTERN, componentName, frameOf, readSets } from "./lib.mjs";
+import { reservedNames } from "./config.mjs";
+import { NAME_PATTERN, componentNameFor, frameOf, readSets } from "./lib.mjs";
 
 /**
  * SVG features Android VectorDrawable can't convert, or that won't follow `currentColor`.
@@ -19,7 +20,8 @@ export const check = (svgDir) => {
                 continue;
             }
 
-            const component = componentName(name, config.suffix);
+            const component = componentNameFor(config, name);
+            if (reservedNames.includes(component)) problems.push(`${file}: component name ${component} is reserved; add an override to componentNames in scripts/config.mjs`);
             if (seen.has(component)) problems.push(`${file}: component name ${component} is already used by ${seen.get(component)}`);
             seen.set(component, file);
 

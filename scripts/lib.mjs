@@ -15,6 +15,9 @@ export const componentName = (name, suffix = "") =>
         .map((part) => part[0].toUpperCase() + part.slice(1))
         .join("") + suffix;
 
+/** The component name for one asset: the config override, or the PascalCase name plus the set's suffix. */
+export const componentNameFor = (config, name) => config.componentNames?.[name] ?? componentName(name, config.suffix);
+
 /** Every SVG of every set in `svgDir`, sorted by name. */
 export const readSets = (svgDir = join(root, "svg")) =>
     Object.entries(sets).map(([set, config]) => {
