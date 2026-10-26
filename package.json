@@ -1,6 +1,6 @@
 {
     "name": "fa-icons",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "description": "Fa icons, flags and logos from the Fa Design System Figma file, as React components and raw SVG",
     "license": "UNLICENSED",
     "private": true,
