@@ -59,11 +59,47 @@ test("the published SVGs are the cleaned ones, ready for a sprite", () => {
     assert.doesNotMatch(svg, /#344054/i);
 });
 
-test("icon size and aria-hidden can be overridden", () => {
-    const html = renderToStaticMarkup(h(assets.ArrowLeft, { size: 16, "aria-hidden": false, "aria-label": "Back" }));
+test("icon size can be overridden", () => {
+    assert.match(renderToStaticMarkup(h(assets.ArrowLeft, { size: 16 })), /width="16" height="16"/);
+});
 
-    assert.match(html, /width="16" height="16"/);
-    assert.match(html, /aria-hidden="false"/);
+for (const [kind, render] of [
+    ["icons", (props) => h(assets.ArrowLeft, props)],
+    ["flags", (props) => h(assets.Flag, { name: "norway-nok", ...props })],
+]) {
+    test(`${kind} are hidden without a label`, () => {
+        const html = renderToStaticMarkup(render({}));
+
+        assert.match(html, /aria-hidden="true"/);
+        assert.doesNotMatch(html, /role=/);
+    });
+
+    test(`${kind} with aria-label are images`, () => {
+        const html = renderToStaticMarkup(render({ "aria-label": "Pluss-artikkel" }));
+
+        assert.match(html, /role="img"/);
+        assert.match(html, /aria-label="Pluss-artikkel"/);
+        assert.doesNotMatch(html, /aria-hidden/);
+    });
+
+    test(`${kind} with aria-labelledby are images`, () => {
+        const html = renderToStaticMarkup(render({ "aria-labelledby": "price" }));
+
+        assert.match(html, /role="img"/);
+        assert.match(html, /aria-labelledby="price"/);
+        assert.doesNotMatch(html, /aria-hidden/);
+    });
+
+    test(`${kind} keep an explicit aria-hidden next to a label`, () => {
+        const html = renderToStaticMarkup(render({ "aria-label": "Pluss-artikkel", "aria-hidden": true }));
+
+        assert.match(html, /aria-hidden="true"/);
+    });
+}
+
+test("logos are only images when labelled", () => {
+    assert.doesNotMatch(renderToStaticMarkup(h(assets.HegnarBokLogo)), /role=|aria-hidden/);
+    assert.match(renderToStaticMarkup(h(assets.HegnarBokLogo, { "aria-label": "Hegnar Bok" })), /role="img"/);
 });
 
 test("fill colors written as inline styles also become currentColor", () => {

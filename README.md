@@ -14,7 +14,7 @@ Set up like [`@untitledui/icons`](https://github.com/untitleduico/icons): SVGs f
 Until the package is published to a registry, install it from a git tag:
 
 ```bash
-npm install github:m-kolovrat/fa-icons#v0.1.0
+npm install github:m-kolovrat/fa-icons#v0.2.0
 ```
 
 npm builds `dist/` on install (the `prepare` script). React 18 or newer is a peer dependency.
@@ -22,7 +22,7 @@ npm builds `dist/` on install (the `prepare` script). React 18 or newer is a pee
 ## React components
 
 ```tsx
-import { ArrowLeft, Flag, FaLargeLogo } from "fa-icons";
+import { ArrowLeft, Flag, FaLargeLogo, Lock } from "fa-icons";
 
 // Icons are 20px by default (the Figma frame). A Tailwind size class overrides it.
 <ArrowLeft className="size-4 text-fg-quaternary" />
@@ -31,8 +31,9 @@ import { ArrowLeft, Flag, FaLargeLogo } from "fa-icons";
 // Color comes from the text color, because icons use currentColor.
 <Button iconLeading={ArrowLeft}>Back</Button>
 
-// Icons and flags are aria-hidden by default. Give meaningful ones a label.
-<ArrowLeft aria-hidden={false} aria-label="Back" />
+// Icons and flags are hidden from screen readers by default. Give one an aria-label only when it carries
+// meaning on its own; it then renders role="img". An icon-only button gets its name on the button, not the icon.
+<Lock aria-label="Pluss-artikkel" />
 
 // Flags by Figma name, typed as FlagName.
 <Flag name="norway-nok" className="size-4" />
