@@ -31,8 +31,8 @@ import { ArrowLeft, Flag, FaLargeLogo, Lock } from "fa-icons";
 // Color comes from the text color, because icons use currentColor.
 <Button iconLeading={ArrowLeft}>Back</Button>
 
-// Icons and flags are hidden from screen readers by default. Give one an aria-label only when it carries
-// meaning on its own; it then renders role="img". An icon-only button gets its name on the button, not the icon.
+// Icons are hidden from screen readers by default. Give one an aria-label only when it carries meaning on
+// its own; it then renders role="img". An icon-only button gets its name on the button, not the icon.
 <Lock aria-label="Pluss-artikkel" />
 
 // Flags by Figma name, typed as FlagName.
@@ -46,6 +46,25 @@ Strokes scale with the icon: a 1.5px stroke at 20px is 1.2px at 16px, as in Figm
 
 Importing from `"fa-icons"` is tree-shaken (`sideEffects: false`). Single files work too:
 `import ArrowLeft from "fa-icons/icons/arrow-left"`.
+
+### Screen readers
+
+Not every export is hidden by default:
+
+| Export                                   | Default                              |
+| ---------------------------------------- | ------------------------------------ |
+| Icons (`<Bell />`, `<Lock />`, …)        | `aria-hidden`                        |
+| `<Flag name="…" />`                      | `aria-hidden`                        |
+| Named flags (`<NorwayNokFlag />`, …)     | Not hidden, and no accessible name   |
+| Logos (`<FaLargeLogo />`, …)             | Not hidden, and no accessible name   |
+
+Any of them with an `aria-label` (or `aria-labelledby`) renders `role="img"` and is announced (since v0.2.0).
+An explicit `aria-hidden` you pass always wins.
+
+- Next to text that says the same thing: nothing to do for icons and `<Flag>`. Add `aria-hidden` to a named
+  flag or a logo, e.g. `<NorwayNokFlag aria-hidden />`.
+- Carries meaning on its own: give it an `aria-label`, e.g. `<NorwayNokFlag aria-label="Norway" />` or
+  `<FaLargeLogo aria-label="Fa" />`.
 
 ## SVG sprite
 
