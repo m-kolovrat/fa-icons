@@ -1,0 +1,41 @@
+name: CI
+
+on:
+    pull_request:
+        branches: [main]
+        # labeled / unlabeled re-run the release label check when a label changes.
+        types: [opened, synchronize, reopened, labeled, unlabeled]
+
+permissions:
+    contents: read
+
+jobs:
+    test:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 22
+                  cache: npm
+            # `npm ci` also runs `prepare`, which builds once already.
+            - run: npm ci
+            - run: npm run check
+            - run: npm run build
+            - run: npm test
+
+    release-label:
+        name: Release label
+        runs-on: ubuntu-latest
+        steps:
+            - name: Exactly one release label
+              env:
+                  LABELS_JSON: ${{ toJSON(github.event.pull_request.labels.*.name) }}
+              run: |
+                  LABELS=$(printf '%s' "$LABELS_JSON" | jq -r '.[]')
+                  count=$(printf '%s\n' "$LABELS" | grep -cE '^release: (major|minor|patch|none)$' || true)
+                  if [ "$count" -ne 1 ]; then
+                      echo "::error::Add exactly one label: release: major (asset renamed or removed), release: minor (asset added or changed), release: patch (fix with no visible change) or release: none (no release)."
+                      exit 1
+                  fi
+                  echo "Release label: $(printf '%s\n' "$LABELS" | grep -E '^release: ')"

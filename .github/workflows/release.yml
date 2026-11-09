@@ -1,0 +1,68 @@
+name: Release
+
+# A merged PR's "release: major|minor|patch" label decides the version bump. This workflow bumps
+# package.json, pushes the version commit and tag to main, and creates the GitHub Release.
+# "release: none", or a push to main that didn't come from a PR, releases nothing.
+# The version commit is pushed with GITHUB_TOKEN, so it doesn't start this workflow again.
+
+on:
+    push:
+        branches: [main]
+
+# One release at a time; a second merge waits instead of racing for the same version.
+concurrency:
+    group: release
+    cancel-in-progress: false
+
+permissions:
+    contents: write # push the version commit and tag, create the release
+    pull-requests: read # read the merged PR's labels
+
+jobs:
+    release:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Pick the bump from the merged PR's label
+              id: bump
+              env:
+                  GH_TOKEN: ${{ github.token }}
+              run: |
+                  labels=$(gh api "repos/$GITHUB_REPOSITORY/commits/$GITHUB_SHA/pulls" --jq '[.[] | select(.merged_at != null)][0].labels[].name' || true)
+                  bump=$(printf '%s\n' "$labels" | sed -nE 's/^release: (major|minor|patch)$/\1/p' | head -n1)
+                  if [ -z "$bump" ]; then
+                      echo "No release: major/minor/patch label on the PR for $GITHUB_SHA. Nothing to release."
+                  else
+                      echo "Bump: $bump"
+                  fi
+                  echo "bump=$bump" >> "$GITHUB_OUTPUT"
+
+            - if: steps.bump.outputs.bump != ''
+              uses: actions/checkout@v4
+              with:
+                  ref: main # latest main, including a version commit from a release that ran just before
+                  fetch-depth: 0
+            - if: steps.bump.outputs.bump != ''
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 22
+                  cache: npm
+            - if: steps.bump.outputs.bump != ''
+              run: npm ci
+            - if: steps.bump.outputs.bump != ''
+              run: npm run check && npm run build && npm test
+
+            - name: Bump, tag and push
+              if: steps.bump.outputs.bump != ''
+              id: version
+              run: |
+                  git config user.name "github-actions[bot]"
+                  git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+                  version=$(npm version "${{ steps.bump.outputs.bump }}")
+                  git push origin HEAD:main "$version"
+                  echo "version=$version" >> "$GITHUB_OUTPUT"
+
+            - name: Create the GitHub Release
+              if: steps.bump.outputs.bump != ''
+              env:
+                  GH_TOKEN: ${{ github.token }}
+              run: gh release create "${{ steps.version.outputs.version }}" --verify-tag --generate-notes
