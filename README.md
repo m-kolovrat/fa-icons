@@ -108,24 +108,12 @@ Figma is the source. Every asset is a component in its Figma section, and its na
 
 ## Release
 
-Releases are automatic: the label on a PR decides the version, and merging it releases.
+```bash
+npm version minor   # 0.1.0 → 0.2.0: new or changed assets. Use major when an asset is renamed or removed.
+git push --follow-tags
+```
 
-| Label            | When                                                              | Example       |
-| ---------------- | ----------------------------------------------------------------- | ------------- |
-| `release: major` | An asset is renamed or removed, or an export changes (apps break) | 0.2.0 → 1.0.0 |
-| `release: minor` | Assets added or changed                                           | 0.2.0 → 0.3.0 |
-| `release: patch` | A fix with no visible change (build, types, a cleaned-up SVG)     | 0.2.0 → 0.2.1 |
-| `release: none`  | No release: README, CI, scripts that don't change the output      |               |
-
-1. Open a PR. CI (`.github/workflows/ci.yml`) runs `npm run check`, `npm run build` and `npm test`, and fails
-   until the PR has exactly one `release: …` label.
-2. Merge it. `.github/workflows/release.yml` runs the checks again, runs `npm version <bump>`, pushes the
-   version commit and the `vX.Y.Z` tag to `main`, and creates a GitHub Release with generated notes.
-3. In `fa-design-system`, Renovate sees the new tag and opens a PR that bumps
-   `github:m-kolovrat/fa-icons#vX.Y.Z` in `package.json` and the lockfile. Other apps change the tag by hand.
-
-Don't run `npm version` locally or push tags yourself; the workflow owns versions. A push to `main` that
-didn't come from a PR releases nothing. If the release workflow fails, fix it on a new PR with the same label.
+Apps update by changing the tag in their `package.json`.
 
 ## Scripts
 
